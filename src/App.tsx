@@ -1,58 +1,56 @@
-import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from './store';
-import { addTodo, removeTodo } from './todoSlice';
+import {motion} from "framer-motion";
 import './App.css';
+type SpinnerProps=
+{
+  size?:number;
+  thickness?:number;
+  color?:string;
+  speed?:number;
+  lable?:string;
+}
 
-function App() {
-  const [text, setText] = useState('');
-  const [selected, setSelected] = useState<number[]>([]);
-
-  const todos = useSelector((state: RootState) => state.todos.todos);
-  const dispatch = useDispatch();
-
-  const handleAdd = () => {
-    if (text.trim() !== '') {
-      dispatch(addTodo(text));
-      setText('');
-    }
-  };
-
-  const handleRemove = (id: number) => {
-    dispatch(removeTodo(id));
-  };
-
+function App({
+size = 48,
+thickness = 4,
+color = 'red',
+speed = 1,
+lable = 'Loading',
+}:SpinnerProps) {
+  const radius = (size - thickness) / 2;
+const circumference = 2 * Math.PI * radius;
   return (
-    <div className='all'>
-      <div className='my'>My Mission List</div>
-      <div className='inandbtn'>
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          className='in'
-          placeholder='Add your mission here'
-        />
-        <button onClick={handleAdd} className='btn'>Add</button>
-      </div>
-
-      {todos.map((todo) => (
-        <div key={todo.id} className='todos'>
-          <div
-            onClick={() =>
-              setSelected((prev) =>
-                prev.includes(todo.id)
-                  ? prev.filter((id) => id !== todo.id)
-                  : [...prev, todo.id]
-              )
-            }
-            style={{ color: selected.includes(todo.id) ? 'green' : 'black' }}
-            className='mission'
-          >
-            {todo.Name}
-          </div>
-          <div onClick={() => handleRemove(todo.id)} className='x'>x</div>
-        </div>
-      ))}
+    <div role="status" aria-live="polite" aria-label={lable} className="spinner-wrapper">
+     <div className="loading">Loading</div> 
+     <motion.svg
+     width={size}
+     height={size}
+     viewBox={`0 0 ${size} ${size}`}
+     initial={{ rotate: 0 }}
+     animate={{ rotate: 360 }}
+     transition={{ repeat: Infinity, ease: 'linear', duration: speed }}
+     className="block">
+     <circle
+     cx={size / 2}
+     cy={size / 2}
+     r={radius}
+     stroke={color}
+     strokeWidth={thickness}
+     opacity={0.12}
+     fill="none"
+     />
+     <motion.circle
+      cx={size / 2}
+     cy={size / 2}
+     r={radius}
+     stroke={color}
+     strokeWidth={thickness}
+     strokeLinecap="round"
+     fill="none"
+     strokeDasharray={`${circumference * 0.75} ${circumference}`} // 75% arc + gap
+     strokeDashoffset={0}
+     style={{ transformOrigin: '50% 50%' }}
+     />
+     </motion.svg>
     </div>
   );
 }
