@@ -1,5 +1,6 @@
 import {motion} from "framer-motion";
 import './App.css';
+import { useState } from "react";
 type SpinnerProps=
 {
   size?:number;
@@ -18,9 +19,38 @@ lable = 'Loading',
 }:SpinnerProps) {
   const radius = (size - thickness) / 2;
 const circumference = 2 * Math.PI * radius;
+const[Rounding,setRounding]=useState<boolean>(false);
   return (
     <div role="status" aria-live="polite" aria-label={lable} className="spinner-wrapper">
-     <div className="loading">Loading</div> 
+    { !Rounding  ?  <span className="click" onClick={()=>setRounding(true)}>Click here mate</span> : null}
+     <div className="loading">Loading</div>
+       <motion.div
+        animate={
+          Rounding
+            ? { rotate: 360 }
+            : { rotate: 0 }
+        }
+        transition={{
+          repeat: Rounding ? Infinity : 0,
+          duration: 3,
+          ease: "linear",
+        }}
+      style={
+        !Rounding ? {
+          transformOrigin: "120px center", 
+          position: "absolute",
+          top:"370px",
+        } : 
+        {
+           transformOrigin: "120px center", 
+           position: "absolute",
+           top:"270px",
+           left:"510px",
+        }
+        
+
+        }
+      >   
      <motion.svg
      width={size}
      height={size}
@@ -51,6 +81,7 @@ const circumference = 2 * Math.PI * radius;
      style={{ transformOrigin: '50% 50%' }}
      />
      </motion.svg>
+     </motion.div>
     </div>
   );
 }
