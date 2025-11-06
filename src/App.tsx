@@ -1,6 +1,7 @@
 import {motion} from "framer-motion";
 import './App.css';
 import { useState } from "react";
+import { useEffect } from "react";
 type SpinnerProps=
 {
   size?:number;
@@ -20,6 +21,13 @@ lable = 'Loading',
   const radius = (size - thickness) / 2;
 const circumference = 2 * Math.PI * radius;
 const[Rounding,setRounding]=useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize(); 
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <div role="status" aria-live="polite" aria-label={lable} className="spinner-wrapper">
     { !Rounding  ?  <span className="click" onClick={()=>setRounding(true)}>Click here mate</span> : null}
@@ -39,13 +47,13 @@ const[Rounding,setRounding]=useState<boolean>(false);
         !Rounding ? {
           transformOrigin: "120px center", 
           position: "absolute",
-          top:"370px",
+          top:isMobile ?  "400px" :  "370px",
         } : 
         {
            transformOrigin: "120px center", 
            position: "absolute",
-           top:"270px",
-           left:"510px",
+           top:isMobile ?  ""   : "270px",
+           left:isMobile ? "60px"  :  "510px",
         }
         
 
